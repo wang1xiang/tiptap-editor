@@ -1,0 +1,31 @@
+{
+  "name": "tiptap-demo",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@tiptap/core": "^2.0.3",
+    "@tiptap/extension-bold": "^2.0.3",
+    "@tiptap/extension-bubble-menu": "^2.0.3",
+    "@tiptap/extension-floating-menu": "^2.0.3",
+    "@tiptap/pm": "^2.0.3",
+    "@tiptap/starter-kit": "^2.0.3",
+    "@tiptap/suggestion": "^2.0.3",
+    "@tiptap/vue-3": "^2.0.3",
+    "sass": "^1.62.1",
+    "scss": "^0.2.4",
+    "tippy.js": "^6.3.7",
+    "vue": "^3.2.47"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.1.0",
+    "typescript": "^5.0.2",
+    "vite": "^4.3.2",
+    "vue-tsc": "^1.4.2"
+  }
+}
