@@ -16,6 +16,7 @@ import FloatingMenu from './components/FloatingMenu.vue'
 import Commands from './components/plugins/commands'
 import suggestion from './components/plugins/suggestion'
 import { CustomBold } from './components/extensions/CustomBold'
+import { CodeBlock } from './components/extensions/CodeBlock'
 import { ref, onMounted, onUnmounted } from 'vue'
 
 const editor = ref(null)
@@ -46,6 +47,7 @@ onMounted(() => {
           },
         },
       }),
+      CodeBlock,
       CustomBold,
       Commands.configure({
         suggestion,
@@ -54,7 +56,21 @@ onMounted(() => {
     content:
       '<h1>仅仅使用StarterKit提供的node、 nark和extensions</h1><p><strong><em><s>字体样式</s></em></strong></p><hr contenteditable="false"><pre><code>时代风帆大厦</code></pre><hr contenteditable="false"><ul><li><p>无序列表</p></li></ul><ol><li><p>有序列表行内<code>代码</code></p></li></ol><blockquote><p>注释</p></blockquote>',
     autofocus: true,
+    injectNonce: 'your-nonce-here',
+    onUpdate({ editor }) {
+      const json = editor.getJSON()
+      const html = editor.getHTML()
+      // 默认两个节点 nodes 之间两个换行符
+      const text = editor.getText()
+      // 可传入参数 blockSeparator 控制节点之间的连接
+      const lineText = editor.getText({ blockSeparator: '' })
+      console.log(json)
+      console.log(html)
+      console.log(text)
+      console.log(lineText)
+    },
   })
+  window.editor = editor.value
 })
 onUnmounted(() => editor.value.destroy())
 </script>
