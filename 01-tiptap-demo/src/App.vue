@@ -17,10 +17,16 @@ import Commands from './components/plugins/commands'
 import suggestion from './components/plugins/suggestion'
 import { CustomBold } from './components/extensions/CustomBold'
 import { CodeBlock } from './components/extensions/CodeBlock'
+import Collaboration from '@tiptap/extension-collaboration'
+import { HocuspocusProvider } from '@hocuspocus/provider'
 import { ref, onMounted, onUnmounted } from 'vue'
 
 const editor = ref(null)
-
+// Set up the Hocuspocus WebSocket provider
+const provider = new HocuspocusProvider({
+  url: 'ws://127.0.0.1:1234',
+  name: 'example-document',
+})
 onMounted(() => {
   editor.value = new Editor({
     editorProps: {
@@ -51,6 +57,10 @@ onMounted(() => {
       CustomBold,
       Commands.configure({
         suggestion,
+      }),
+      // Register the document with Tiptap
+      Collaboration.configure({
+        document: provider.document,
       }),
     ],
     content:

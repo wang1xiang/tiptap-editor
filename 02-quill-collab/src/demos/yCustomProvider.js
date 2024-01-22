@@ -7,7 +7,7 @@ import { WebsocketProvider } from 'y-websocket'
 
 Quill.register('modules/cursors', QuillCursors)
 
-const quill = new Quill(document.querySelector('#app') as HTMLElement, {
+const quill = new Quill(document.querySelector('#app'), {
   modules: {
     cursors: true,
     toolbar: [
@@ -31,22 +31,30 @@ const ydoc = new Y.Doc()
 // 在文档上定义共享文本类型
 const ytext = ydoc.getText('quill-demo')
 
-// 连接到 websocket 服务端 yjs提供的体验服务器
-const wsProvider = new WebsocketProvider('ws://localhost:1234', 'room', ydoc)
-// 绑定
-const binding = new QuillBinding(ytext, quill, wsProvider.awareness)
-// 从wsProvider获取awareness
-const awareness = wsProvider.awareness
+quill.on('text-change', (delta, content, source) => {
+  if (source === 'api') return
+  const text = quill.getText()
+  ytext.delete(0, ytext.length)
+  ytext.insert(0, text)
+})
+// 创建一个编辑器绑定 将quill编辑器“绑定”到 Y.Text 类型。
+// const binding = new QuillBinding(ytext, quill)
 
-// 监听awareness变化
-awareness.on('change', (changes: Y.Transaction) => {
-  // 获取所有协同信息 显示光标位置和用户列表
-  console.log(Array.from(awareness.getStates().values()))
+// 连接到 websocket 服务端 yjs提供的体验服务器
+const wsProvider = new WebsocketProvider(
+  'ws://localhost:1234',
+  'room',
+  ydoc
+)
+// // 绑定
+// const binding = new QuillBinding(ytext, quill, wsProvider.awareness)
+
+wsProvider.on('status', (event) => {
+  console.log(event.status) // logs "connected" or "disconnected"
 })
 
-// 设置user字段传递用户信息 { name: '', color: '' }
-// 如果未指定user字段，Provider会使用随机用户名以默认颜色呈现光标。
-awareness.setLocalStateField('user', {
-  name: 'Emmanuelle Charpentier',
-  color: '#ffb61e'
+ydoc.on('update', (update, origin) => {
+  if (!origin) return
+  Y.applyUpdate(ydoc, update)
+  quill.setText(ytext.toString())
 })
