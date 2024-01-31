@@ -4,6 +4,7 @@ import 'quill/dist/quill.snow.css'
 import * as Y from 'yjs'
 import { QuillBinding } from 'y-quill'
 import { WebsocketProvider } from 'y-websocket'
+import { IndexeddbPersistence } from 'y-indexeddb'
 
 Quill.register('modules/cursors', QuillCursors)
 
@@ -31,10 +32,21 @@ const ydoc = new Y.Doc()
 // 在文档上定义共享文本类型
 const ytext = ydoc.getText('quill-demo')
 
+const roomName = 'quill-room-name'
 // 连接到 websocket 服务端 yjs提供的体验服务器
-const wsProvider = new WebsocketProvider('ws://localhost:1234', 'room', ydoc)
+const wsProvider = new WebsocketProvider('ws://localhost:1234', roomName, ydoc)
 // 绑定
 const binding = new QuillBinding(ytext, quill, wsProvider.awareness)
+
+const indexDBProvider = new IndexeddbPersistence(roomName, ydoc)
+
+// 文档加载完成后
+indexDBProvider.on('synced', () => {
+  console.log('indexDB数据加载完成')
+})
+
+indexDBProvider.set('version', '1')
+indexDBProvider.get('version').then(console.log)
 // 从wsProvider获取awareness
 const awareness = wsProvider.awareness
 
@@ -48,5 +60,5 @@ awareness.on('change', (changes: Y.Transaction) => {
 // 如果未指定user字段，Provider会使用随机用户名以默认颜色呈现光标。
 awareness.setLocalStateField('user', {
   name: 'Emmanuelle Charpentier',
-  color: '#ffb61e'
+  color: '#ffb61e',
 })
