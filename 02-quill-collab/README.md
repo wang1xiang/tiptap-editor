@@ -22,4 +22,4 @@ PORT=1234 npx y-websocket
 yarn dev
 ```
 
-打开[localhost:5173](http://localhost:5173)
+打开[localhost:5173](http://localhost:5173)（可多开几个 tab 页或浏览器进行测试）
